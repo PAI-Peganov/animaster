@@ -1,5 +1,7 @@
 addListeners();
 
+let heartAnimation = undefined;
+
 function addListeners() {
     document.getElementById('fadeInPlay')
         .addEventListener('click', function () {
@@ -40,7 +42,18 @@ function addListeners() {
     document.getElementById('heartBeatingPlay')
         .addEventListener('click', function () {
             const block = document.getElementById('heartBeatingBlock');
-            animaster().heartBeating(block);
+            if (heartAnimation !== undefined) {
+                heartAnimation.stop();
+            }
+            heartAnimation = animaster().heartBeating(block);
+        });
+
+    document.getElementById('heartBeatingStop')
+        .addEventListener('click', function () {
+            if (heartAnimation === undefined) {
+                return;
+            }
+            heartAnimation.stop();
         });
 
     document.getElementById('complexAnimationPlay')
@@ -138,10 +151,15 @@ function animaster() {
             setTimeout(() => this.fadeOut(element, duration * 1 / 3), duration * 1 / 3);
         },
         heartBeating(element) {
-            setInterval(() => {
+            const id = setInterval(() => {
                 this.scale(element, 500, 1.4);
                 setTimeout(() => this.scale(element, 500, 1), 500);
             }, 1000);
+            return {
+                stop() {
+                    clearInterval(id);
+                }
+            }
         }
     }
 }
