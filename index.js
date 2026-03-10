@@ -65,6 +65,10 @@ function addListeners() {
             .addMove(200, {x: 80, y: 0})
             .addScale(800, 1)
             .addMove(200, {x: 40, y: -40})
+            .addFadeOut(500)
+            .addFadeIn(300)
+            .addFadeOut(200)
+            .addFadeIn(300)
             .addScale(800, 0.7)
             .addMove(200, {x: 0, y: 0})
             .addScale(800, 1.5)
@@ -136,7 +140,7 @@ function animaster() {
             element.classList.add('hide');
         },
         move(element, duration, translation) {
-            this.addMove(duration, translation).play(element);
+            move(element, duration, translation);
         },
         scale(element, duration, ratio) {
             element.style.transitionDuration =  `${duration}ms`;
