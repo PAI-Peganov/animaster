@@ -27,6 +27,16 @@ function addListeners() {
 }
 
 function animaster() {
+    function resetFadeIn(element) {
+        element.style.transitionDuration = null;
+    }
+    function resetFadeOut(element) {
+        element.style.transitionDuration = null;
+    }
+    function resetMoveAndScale(element, translation, ratio) {
+        element.style.transitionDuration = null;
+        element.style.transform = getTransform(-translation, -ratio);
+    }
     return {
         fadeIn(element, duration) {
             element.style.transitionDuration =  `${duration}ms`;
