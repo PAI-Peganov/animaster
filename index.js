@@ -101,25 +101,42 @@ function animaster() {
     }
     function resetMoveAndScale(element) {
         element.style.transitionDuration = null;
-<<<<<<< HEAD
         element.style.transform = getTransform({ x: 0, y: 0 }, 1);
     }
     function move(element, duration, translation) {
         element.style.transitionDuration = `${duration}ms`;
         element.style.transform = getTransform(translation, null);
-=======
-        element.style.transform = getTransform({x: 0, y: 0}, 1);
->>>>>>> 9aaeab08b50adc3d515312919c0cd9bbc0ea7d8c
     }
     return {
         _steps: [],
-        play(element) {
+        play(element, cycled=false) {
             let delay = 0;
+            let timeouts = [];
+            let _stop = () => 1;
             for (const struct of this._steps) {
-                setTimeout(() => struct.f(element), delay);
+                timeouts.push(setTimeout(() => {
+                    const o = struct.f(element);
+                    if (o !== undefined) {
+                        _stop = o.stop;
+                    }
+                }, delay));
                 delay += struct.duration;
             }
+            if (cycled) {
+                return {
+                    stop() {
+                        _stop();
+                    },
+                    reset() {
+                        timeouts.forEach(v => clearTimeout(v));
+                        stop();
+                        resetMoveAndScale(element);
+                        resetFadeOut(element);
+                    }
+                };
+            }
             setTimeout(() => resetMoveAndScale(element), delay);
+            setTimeout(() => resetFadeOut(element), delay);
         },
         addMove(duration, translation) {
             this._steps.push({
@@ -148,6 +165,24 @@ function animaster() {
                 duration: duration,
             });
             return this;
+        },
+        addMoveAndHide(duration) {
+            this._steps.push({
+                f: el => this.moveAndHide(el, duration),
+                duration: duration
+            });
+        },
+        addShowAndHide(duration) {
+            this._steps.push({
+                f: el => this.showAndHide(el, duration),
+                duration: duration
+            });
+        },
+        addHeartBeating(duration) {
+            this._steps.push({
+                f: el => this.heartBeating(el),
+                duration: duration
+            });
         },
         fadeIn(element, duration) {
             element.style.transitionDuration =  `${duration}ms`;
